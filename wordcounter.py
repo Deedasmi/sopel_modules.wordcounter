@@ -96,7 +96,8 @@ def format_string(top_list, use_dict = all_words):
 def get_stop_words():
     with open('stop-word-list.csv') as f:
         reader = csv.reader(f)
-        for item in reader:
-            STOP_WORDS.add(item)
+        for row in reader:
+            for item in row:
+                STOP_WORDS.add(item)
 
 get_stop_words()
