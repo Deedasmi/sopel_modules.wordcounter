@@ -32,6 +32,10 @@ def log_words(bot, trigger):
     for char in IGNORE:
         sentence = sentence.replace(char, "")
 
+    add_words(user, sentence)
+
+
+def add_words(user, sentence):
     words = sentence.split()
     for word in words:
         if word in STOP_WORDS:
