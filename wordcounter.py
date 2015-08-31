@@ -35,6 +35,8 @@ def log_words(bot, trigger):
 
     add_words(user, sentence)
 
+    bot.say("{} added {}".format(user, sentence))
+
 
 @commands("words")
 def words(bot, trigger):
