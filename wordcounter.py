@@ -68,6 +68,7 @@ def words(bot, trigger):
 
 
 def add_words(user, sentence):
+    global all_words, user_words
     s_words = sentence.split()
     for word in s_words:
         if word not in all_words:
