@@ -21,7 +21,6 @@ def log_words(bot, trigger):
     """
     Logs all words that are said
     """
-    bot.say("starting")
     user = trigger.nick.upper()
     sentence = trigger.group(0)
 
@@ -33,15 +32,12 @@ def log_words(bot, trigger):
 
     add_words(user, sentence)
 
-    bot.say("{} added {}".format(user, sentence))
-
 
 @commands("words")
 def words(bot, trigger):
     """
     Takes user input, and outputs top words
     """
-    bot.say("triggered")
     try:
         user = trigger.group(2).split()[0]
         use = user_words[user.upper()]
