@@ -9,12 +9,9 @@ from __future__ import unicode_literals
 from sopel.module import commands, NOLIMIT, rule
 import re
 import heapq
-import csv
 
 user_words = {}
 all_words = {}
-
-STOP_WORDS = set()
 
 IGNORE = ["!", ",", "?", "*", ".", "<", ">", "(", ")"]
 
@@ -90,7 +87,7 @@ def get_top(use_dict, number, ignore_rules):
         use_dict = use_dict.copy()
         del_keys = []
         for key in use_dict.keys():
-            if len(key) < 4 or key in STOP_WORDS:
+            if len(key) < 4:
                 del_keys.append(key)
         for key in del_keys:
             del use_dict[key]
@@ -104,13 +101,3 @@ def format_string(top_list, use_dict=all_words):
         response += "'{}' : {}, ".format(item, use_dict[item])
     return response[:-2]
 
-
-def get_stop_words():
-    with open('stop-word-list.csv') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            for item in row:
-                STOP_WORDS.add(item.strip())
-
-
-get_stop_words()
