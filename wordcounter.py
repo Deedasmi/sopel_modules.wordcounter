@@ -14,7 +14,7 @@ import csv
 user_words = {}
 all_words = {}
 
-STOP_WORDS = set([])
+STOP_WORDS = set()
 
 IGNORE = ["!", ",", "?", "*", ".", "<", ">", "(", ")"]
 
@@ -24,14 +24,15 @@ def log_words(bot, trigger):
     """
     Logs all words that are said
     """
+    bot.say("starting")
     user = trigger.nick.upper()
     sentence = trigger.group(0)
 
     if user == bot.nick or ".words" in sentence:
         return NOLIMIT
 
-    for char in IGNORE:
-        sentence = sentence.replace(char, "")
+    for symbol in IGNORE:
+        sentence = sentence.replace(symbol, "")
 
     add_words(user, sentence)
 
@@ -43,6 +44,7 @@ def words(bot, trigger):
     """
     Takes user input, and outputs top words
     """
+    bot.say("triggered")
     try:
         user = trigger.group(2).split()[0]
         use = user_words[user.upper()]
