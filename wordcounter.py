@@ -6,7 +6,7 @@ Licensed Eiffel Forum License, version 2
 """
 
 from __future__ import unicode_literals
-from sopel.module import commands, example, NOLIMIT, rule
+from sopel.module import commands, NOLIMIT, rule
 import re
 import heapq
 import csv
@@ -17,6 +17,7 @@ all_words = {}
 STOP_WORDS = set([])
 
 IGNORE = ["!", ",", "?", "*", ".", "<", ">", "(", ")"]
+
 
 @rule(".*")
 def log_words(bot, trigger):
@@ -35,23 +36,11 @@ def log_words(bot, trigger):
     add_words(user, sentence)
 
 
-def add_words(user, sentence):
-    words = sentence.split()
-    for word in words:
-        if word in STOP_WORDS:
-            continue
-        if word not in all_words:
-            all_words[word] = 0
-        if user not in user_words:
-            user_words[user] = {}
-        if word not in user_words[user]:
-            user_words[user][word] = 0
-        all_words[word] += 1
-        user_words[user][word] += 1
-
-
 @commands("words")
 def words(bot, trigger):
+    """
+    Takes user input, and outputs top words
+    """
     try:
         user = trigger.group(2).split()[0]
         use = user_words[user.upper()]
@@ -74,8 +63,21 @@ def words(bot, trigger):
     except (AttributeError, TypeError):
         pass
 
-    string = format_string(get_top(use, number, ignore_rules), use)
-    bot.say(string)
+    response = format_string(get_top(use, number, ignore_rules), use)
+    bot.say(response)
+
+
+def add_words(user, sentence):
+    s_words = sentence.split()
+    for word in s_words:
+        if word not in all_words:
+            all_words[word] = 0
+        if user not in user_words:
+            user_words[user] = {}
+        if word not in user_words[user]:
+            user_words[user][word] = 0
+        all_words[word] += 1
+        user_words[user][word] += 1
 
 
 def get_top(use_dict, number, ignore_rules):
@@ -83,25 +85,27 @@ def get_top(use_dict, number, ignore_rules):
         use_dict = use_dict.copy()
         del_keys = []
         for key in use_dict.keys():
-            if len(key) < 4:
+            if len(key) < 4 or key in STOP_WORDS:
                 del_keys.append(key)
         for key in del_keys:
             del use_dict[key]
 
-    return  heapq.nlargest(number, use_dict, use_dict.get)
+    return heapq.nlargest(number, use_dict, use_dict.get)
 
 
-def format_string(top_list, use_dict = all_words):
+def format_string(top_list, use_dict=all_words):
     response = ""
     for item in top_list:
         response += "'{}' : {}, ".format(item, use_dict[item])
     return response[:-2]
+
 
 def get_stop_words():
     with open('stop-word-list.csv') as f:
         reader = csv.reader(f)
         for row in reader:
             for item in row:
-                STOP_WORDS.add(item)
+                STOP_WORDS.add(item.strip())
+
 
 get_stop_words()
